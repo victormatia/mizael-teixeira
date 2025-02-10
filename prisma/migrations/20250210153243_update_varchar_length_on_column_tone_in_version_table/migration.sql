@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Version" ALTER COLUMN "tone" SET DATA TYPE VARCHAR(8);
