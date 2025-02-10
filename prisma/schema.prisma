@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gender {
+  id   String @id @default(uuid())
+  name String @unique @db.VarChar(16)
+
+  GenderToMusic GenderToMusic[]
+}
+
+model Music {
+  id   String @id @default(uuid())
+  name String @unique @db.VarChar(64)
+  autor String @default("Desconhecido")
+
+  GenderToMusic GenderToMusic[]
+  Version       Version[]
+}
+
+model Version {
+  id      String  @id @default(uuid())
+  musicId String  @map("music-id")
+  tone    String  @db.VarChar(8)
+  price   Decimal
+  file    String
+
+  Music Music @relation(fields: [musicId], references: [id])
+
+  @@unique([musicId, tone])
+}
+
+model GenderToMusic {
+  genderId String @map("gender-id")
+  musicId  String @map("music-id")
+
+  Gender Gender @relation(fields: [genderId], references: [id], onDelete: Cascade)
+  Music  Music  @relation(fields: [musicId], references: [id], onDelete: Cascade)
+
+  @@id([genderId, musicId], map: "genderToMusicPk")
+}
