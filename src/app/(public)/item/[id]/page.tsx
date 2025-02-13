@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MUSICS_URL } from '@/constants/urls';
+import { MUSICS_URL, POST_EMAIL_SUCESS } from '@/constants/urls';
 import useEmail from '@/hooks/useEmail';
 import { Music } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ export default function Item({ params: { id } }: TProps) {
 
   const sendEmailMutation = useMutation({
     mutationKey: ['payment', 'success'],
-    mutationFn: async () => axios.post('http://localhost:3000/api/email/success'),
+    mutationFn: async () => axios.post(POST_EMAIL_SUCESS),
     onSuccess: () => router.replace('/'),
     onError: () => {},
   });
