@@ -16,11 +16,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MUSICS_URL } from '@/constants/urls';
 import useEmail from '@/hooks/useEmail';
 import { Music } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type TProps = {
   params: { id: string };
@@ -46,11 +46,20 @@ export default function Item({ params: { id } }: TProps) {
     },
   });
 
+  const sendEmailMutation = useMutation({
+    mutationKey: ['payment', 'success'],
+    mutationFn: async () => axios.post('http://localhost:3000/api/email/success'),
+    onSuccess: () => router.replace('/'),
+    onError: () => {},
+  });
+
+  const mutateIsPending = sendEmailMutation.isPending;
+
   return (
     <main className="flex flex-col items-center justify-center gap-4 p-8 max-md:p-4">
       <Dialog>
         <div className="w-full max-w-screen-md">
-          <Button onClick={() => router.back()} variant="link" className="text-base font-bold">
+          <Button onClick={() => router.back()} variant="link" className="p-0 text-base font-bold">
             <ChevronLeft />
             <p>Voltar</p>
           </Button>
@@ -104,22 +113,35 @@ export default function Item({ params: { id } }: TProps) {
         </div>
 
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Adicione um email</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            {email
-              ? 'Confirme o seu email antes de proseguir'
-              : 'Para proseguir você deve disponibilizar um email para que possamos enviar o arquivo da partitura quando o pagamento for aprovado.'}
-          </DialogDescription>
-          <Input
-            onChange={({ target }) => saveEmail(target.value)}
-            value={email ? email : undefined}
-            placeholder="exemplo@gmail.com"
-          />
-          <DialogFooter>
-            <Button>Finalizar compra</Button>
-          </DialogFooter>
+          {mutateIsPending ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Redirecionando...</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>Você está sendo redirecionado para a área de pagamento.</DialogDescription>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Adicione um email</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                {email
+                  ? 'Confirme o seu email antes de proseguir'
+                  : 'Para proseguir você deve disponibilizar um email para que possamos enviar o arquivo da partitura quando o pagamento for aprovado.'}
+              </DialogDescription>
+              <Input
+                onChange={({ target }) => saveEmail(target.value)}
+                value={email ? email : undefined}
+                placeholder="exemplo@gmail.com"
+              />
+              <DialogFooter>
+                <Button disabled={mutateIsPending} onClick={() => sendEmailMutation.mutate()}>
+                  {mutateIsPending ? 'Carregando' : 'Finalizar compra'}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </main>
