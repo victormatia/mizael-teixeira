@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 
 export default function Header() {
   return (
-    <header className="flex w-full max-w-screen-2xl items-center justify-between px-8 pt-8">
+    <header className="flex w-full items-center justify-between p-4 lg:p-8">
       <h1 className="text-2xl font-bold text-zinc-800">
         <Link href="/">Mizael Teixeira</Link>
       </h1>
