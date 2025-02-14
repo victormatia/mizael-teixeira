@@ -109,7 +109,9 @@ export default function Item({ params: { id } }: TProps) {
             </div>
             <div>
               <DialogTrigger asChild>
-                <Button disabled={isLoading} className="w-full">Comprar</Button>
+                <Button disabled={isLoading} className="w-full">
+                  Comprar
+                </Button>
               </DialogTrigger>
             </div>
           </div>
