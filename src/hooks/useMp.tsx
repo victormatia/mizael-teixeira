@@ -26,8 +26,8 @@ export default function useMp() {
       return data;
     },
     onSuccess: (data) => {
-      axios.post(POST_EMAIL_SUCESS)
-      console.log(data)
+      axios.post(POST_EMAIL_SUCESS);
+      console.log(data);
       router.push(data.initPoint);
     },
     onError: (e) => console.error(e),
