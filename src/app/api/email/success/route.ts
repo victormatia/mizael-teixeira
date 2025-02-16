@@ -1,39 +1,29 @@
 import prisma from '@/lib/prisma';
-import createsHtml from '@/utils/createsHtml';
-import nodemailer, { SendMailOptions } from 'nodemailer';
+import sgMail, { MailDataRequired } from '@sendgrid/mail';
+// import { NextRequest } from 'next/server';
 
 async function main() {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'mizaelteixeira.contato@gmail.com',
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
-  const mailOptions: SendMailOptions = {
-    from: 'mizaelteixeira',
+  const msg: MailDataRequired = {
     to: 'fvictor1705@gmail.com',
+    from: 'mizaelteixeira.contato@gmail.com',
     subject: 'Confirmação de compra',
-    html: createsHtml(),
+    templateId: 'd-b8497dce95c04c75864871dfd85dd892',
   };
 
-  transporter.sendMail(mailOptions, function (error) {
-    if (error) {
-      throw new Error(error.message);
-    }
-  });
-
-  return 'OK';
+  sgMail.send(msg);
 }
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
+  // const body = req.json();
+
   return main()
-    .then(async (data) => {
+    .then(async () => {
       await prisma.$disconnect();
-      return Response.json(data, { status: 201 });
+      return Response.json({ message: 'Sent email' }, { status: 201 });
     })
     .catch(async (e) => {
       console.error(e);

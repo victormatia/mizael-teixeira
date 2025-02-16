@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MUSICS_URL, POST_EMAIL_SUCESS } from '@/constants/urls';
+import { MUSICS_URL } from '@/constants/urls';
 import useEmail from '@/hooks/useEmail';
+import useMp from '@/hooks/useMp';
 import { Music } from '@prisma/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -46,14 +47,19 @@ export default function Item({ params: { id } }: TProps) {
     },
   });
 
-  const sendEmailMutation = useMutation({
-    mutationKey: ['payment', 'success'],
-    mutationFn: async () => axios.post(POST_EMAIL_SUCESS),
-    onSuccess: () => router.replace('/'),
-    onError: () => {},
-  });
+  const { createCheckoutMutation, mutateIsPending } = useMp();
 
-  const mutateIsPending = sendEmailMutation.isPending;
+  const createCheckout = () =>
+    createCheckoutMutation.mutate({
+      payerEmail: email as string,
+      price: 12,
+      quantity: 1,
+      product: {
+        id: music?.id as string,
+        name: `Partitura: ${music?.name} - Versão: ${instrument} - Tom: ${tone}`,
+        autor: music?.autor as string,
+      },
+    });
 
   return (
     <main className="flex flex-col items-center justify-center gap-4 p-8 max-md:p-4">
@@ -106,7 +112,9 @@ export default function Item({ params: { id } }: TProps) {
             </div>
             <div>
               <DialogTrigger asChild>
-                <Button className="w-full">Comprar</Button>
+                <Button disabled={isLoading} className="w-full">
+                  Comprar
+                </Button>
               </DialogTrigger>
             </div>
           </div>
@@ -118,7 +126,9 @@ export default function Item({ params: { id } }: TProps) {
               <DialogHeader>
                 <DialogTitle>Redirecionando...</DialogTitle>
               </DialogHeader>
-              <DialogDescription>Você está sendo redirecionado para a área de pagamento.</DialogDescription>
+              <DialogDescription>
+                Você será redirecionado para a área de pagamento em alguns segundos.
+              </DialogDescription>
             </>
           ) : (
             <>
@@ -136,7 +146,7 @@ export default function Item({ params: { id } }: TProps) {
                 placeholder="exemplo@gmail.com"
               />
               <DialogFooter>
-                <Button disabled={mutateIsPending} onClick={() => sendEmailMutation.mutate()}>
+                <Button disabled={mutateIsPending} onClick={createCheckout}>
                   {mutateIsPending ? 'Carregando' : 'Finalizar compra'}
                 </Button>
               </DialogFooter>
