@@ -7,13 +7,14 @@ import { v4 as uuid } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-type TData = Music & {
+export type TCreateCheckoutInputData<T> = {
   quantity: number;
   price: number;
   payerEmail: string;
+  product: T;
 };
 
-async function main(data: TData) {
+async function main(data: TCreateCheckoutInputData<Music>) {
   const preference = new Preference(mpClient);
 
   const { id, init_point, external_reference } = await preference.create({
@@ -24,8 +25,8 @@ async function main(data: TData) {
       },
       items: [
         {
-          id: data.id,
-          title: data.name,
+          id: data.product.id,
+          title: data.product.name,
           quantity: data.quantity,
           unit_price: data.price,
           currency_id: 'BRL',

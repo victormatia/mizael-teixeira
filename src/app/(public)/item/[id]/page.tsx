@@ -51,11 +51,14 @@ export default function Item({ params: { id } }: TProps) {
 
   const createCheckout = () =>
     createCheckoutMutation.mutate({
-      id: music?.id,
-      name: `Partitura: ${music?.name} - Versão: ${instrument} - Tom: ${tone}`,
-      quantity: 1,
+      payerEmail: email as string,
       price: 12,
-      payerEmail: email,
+      quantity: 1,
+      product: {
+        id: music?.id as string,
+        name: `Partitura: ${music?.name} - Versão: ${instrument} - Tom: ${tone}`,
+        autor: music?.autor as string,
+      },
     });
 
   return (

@@ -1,5 +1,7 @@
+import { TCreateCheckoutInputData } from '@/app/api/mp/create-checkout/route';
 import { CREATE_CHECKOUT_URL, POST_EMAIL_SUCESS } from '@/constants/urls';
 import { initMercadoPago } from '@mercadopago/sdk-react';
+import { Music } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -16,7 +18,7 @@ export default function useMp() {
 
   const createCheckoutMutation = useMutation({
     mutationKey: ['create-checkout'],
-    mutationFn: async (checkoutData: any) => {
+    mutationFn: async (checkoutData: TCreateCheckoutInputData<Music>) => {
       const { data } = await axios.post<TCreateCheckoutResponse>(CREATE_CHECKOUT_URL, checkoutData, {
         headers: {
           'Content-Type': 'application/json',
