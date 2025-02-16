@@ -13,9 +13,9 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    const { type, data } = body;
+    const { topic, data } = body;
 
-    switch (type) {
+    switch (topic) {
       case 'payment':
         const payment = new Payment(mpClient);
         const paymentData = await payment.get({ id: data.id });
