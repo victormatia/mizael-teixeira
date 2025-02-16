@@ -13,12 +13,12 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    const { topic, data } = body;
+    const { topic, resource } = body;
 
     switch (topic) {
       case 'payment':
         const payment = new Payment(mpClient);
-        const paymentData = await payment.get({ id: data.id });
+        const paymentData = await payment.get({ id: resource });
         if (
           paymentData.status === 'approved' || // Pagamento por cartão OU
           paymentData.date_approved !== null // Pagamento por Pix
