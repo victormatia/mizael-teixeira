@@ -1,5 +1,5 @@
 import { TCreateCheckoutInputData } from '@/app/api/mp/create-checkout/route';
-import { CREATE_CHECKOUT_URL, POST_EMAIL_SUCESS } from '@/constants/urls';
+import { CREATE_CHECKOUT_URL } from '@/constants/urls';
 import { initMercadoPago } from '@mercadopago/sdk-react';
 import { Music } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -28,8 +28,6 @@ export default function useMp() {
       return data;
     },
     onSuccess: (data) => {
-      axios.post(POST_EMAIL_SUCESS);
-      console.log(data);
       router.push(data.initPoint);
     },
     onError: (e) => console.error(e),
