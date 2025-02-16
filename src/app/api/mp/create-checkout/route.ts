@@ -36,6 +36,7 @@ async function main(data: TCreateCheckoutInputData<Music>) {
       payment_methods: {
         installments: 2,
       },
+      notification_url: HOST + '/api/mp/webhook',
       back_urls: {
         success: HOST + '/payment/approved',
         pending: HOST + '/payment/pending',
